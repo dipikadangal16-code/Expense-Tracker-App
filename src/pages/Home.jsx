@@ -1,15 +1,10 @@
 import Navbar from "../components/navbar"
 
-function Home() {
+export default function Home({ logoutUpdate, uid }) {
     return (
-        <div style={{ backgroundColor: "#eaf4ff", minHeight: "100vh" }}>
-            <Navbar />
-            <div style={{ padding: "20px", color: "#0b3c6d" }}>
-                <h1>Welcome to Expense Tracker</h1>
-                <p>Track and summarize your expenses easily.</p>
-            </div>
+        <div style={{ minHeight: "100vh", backgroundColor: "#eaf4ff" }}>
+            <Navbar logoutUpdate={logoutUpdate} uid={uid} />
+            <h1 style={{ color: "#0b3c6d", padding: 20 }}>Welcome to Expense Tracker</h1>
         </div>
     )
 }
-
-export default Home

@@ -1,105 +1,70 @@
 import { useForm } from "react-hook-form"
 import { signInWithEmailAndPassword, signInWithPopup } from "firebase/auth"
-import { auth, googleProvider } from "../firebase"
-import { useNavigate } from "react-router-dom"
+import { auth, googleProvider, facebookProvider } from "../firebase"
 import Cookies from "js-cookie"
+import { useNavigate, Link } from "react-router-dom"
 
-function Login({ loginUpdate }) {
-    var navigate = useNavigate()
-    var form = useForm()
-    var register = form.register
-    var handleSubmit = form.handleSubmit
+export default function Login({ loginUpdate }) {
+    const navigate = useNavigate()
+    const { register, handleSubmit, formState: { errors } } = useForm()
 
-    // Email/Password login
-    function onSubmit(data) {
+    const onSubmit = (data) => {
         signInWithEmailAndPassword(auth, data.email, data.password)
-            .then(function (result) {
-                Cookies.set("uid", result.user.uid)
-                loginUpdate() // notify App to re-render
-                navigate("/") // go to home
+            .then(userCredential => {
+                Cookies.set("uid", userCredential.user.uid)
+                Cookies.set("name", userCredential.user.displayName || "")
+                Cookies.set("token", userCredential.user.accessToken)
+                loginUpdate()
+                navigate("/")
             })
-            .catch(function (error) {
-                alert(error.message)
+            .catch(() => alert("Invalid email or password"))
+    }
+
+    const loginWithGoogle = () => {
+        signInWithPopup(auth, googleProvider)
+            .then(userCredential => {
+                Cookies.set("uid", userCredential.user.uid)
+                Cookies.set("name", userCredential.user.displayName || "")
+                Cookies.set("token", userCredential.user.accessToken)
+                loginUpdate()
+                navigate("/")
             })
     }
 
-    // Google login
-    function loginGoogle() {
-        signInWithPopup(auth, googleProvider)
-            .then(function (result) {
-                Cookies.set("uid", result.user.uid)
-                Cookies.set("name", result.user.displayName)
-                Cookies.set("token", result.user.accessToken)
-                loginUpdate() // notify App to re-render
-                navigate("/") // go to home
-            })
-            .catch(function (error) {
-                alert(error.message)
+    const loginWithFacebook = () => {
+        signInWithPopup(auth, facebookProvider)
+            .then(userCredential => {
+                Cookies.set("uid", userCredential.user.uid)
+                Cookies.set("name", userCredential.user.displayName || "")
+                Cookies.set("token", userCredential.user.accessToken)
+                loginUpdate()
+                navigate("/")
             })
     }
 
     return (
-        <div style={{
-            padding: "40px",
-            backgroundColor: "#eaf4ff",
-            minHeight: "100vh",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center"
-        }}>
-            <h2 style={{ color: "#0b3c6d" }}>Login</h2>
+        <div style={{ padding: 20 }}>
+            <h2>Login</h2>
+            <form onSubmit={handleSubmit(onSubmit)}>
+                <input placeholder="Email" {...register("email", { required: "Email is required" })} />
+                {errors.email && <p style={{ color: "red" }}>{errors.email.message}</p>}
 
-            <button
-                onClick={loginGoogle}
-                style={{
-                    marginTop: "20px",
-                    padding: "10px 15px",
-                    backgroundColor: "#0b3c6d",
-                    color: "white",
-                    border: "none",
-                    cursor: "pointer"
-                }}
-            >
-                Login with Google
-            </button>
+                <input type="password" placeholder="Password" {...register("password", { required: "Password is required" })} />
+                {errors.password && <p style={{ color: "red" }}>{errors.password.message}</p>}
 
-            <form
-                onSubmit={handleSubmit(onSubmit)}
-                style={{ marginTop: "30px", display: "flex", flexDirection: "column", width: "250px" }}
-            >
-                <input
-                    placeholder="Email"
-                    {...register("email")}
-                    style={{ padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #0b3c6d" }}
-                />
-                <input
-                    type="password"
-                    placeholder="Password"
-                    {...register("password")}
-                    style={{ padding: "10px", marginBottom: "15px", borderRadius: "5px", border: "1px solid #0b3c6d" }}
-                />
-                <button
-                    type="submit"
-                    style={{
-                        padding: "10px",
-                        backgroundColor: "#0b3c6d",
-                        color: "white",
-                        border: "none",
-                        cursor: "pointer"
-                    }}
-                >
-                    Login
-                </button>
+                <button type="submit">Login</button>
             </form>
 
-            <p
-                style={{ marginTop: "15px", cursor: "pointer", color: "#0b3c6d" }}
-                onClick={function () { navigate("/register") }}
-            >
-                Don’t have an account? Register
-            </p>
+            {/* Link to Register */}
+            <div style={{ marginTop: 15 }}>
+                <p>
+                    Don't have an account? <Link to="/register">Register here</Link>
+                </p>
+            </div>
+
+            <hr />
+            <button onClick={loginWithGoogle}>Login with Google</button>
+            <button onClick={loginWithFacebook}>Login with Facebook</button>
         </div>
     )
 }
-
-export default Login

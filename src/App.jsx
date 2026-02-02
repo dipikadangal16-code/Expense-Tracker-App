@@ -10,34 +10,31 @@ import Summary from "./pages/Summary"
 import About from "./pages/About"
 
 function App() {
-  const [uid, setUid] = useState(null)
+  const [uid, setUid] = useState(Cookies.get("uid") || null)
 
-  // On mount, check cookies
   useEffect(() => {
     const cookieUid = Cookies.get("uid")
     if (cookieUid) setUid(cookieUid)
   }, [])
 
-  // Called after login
-  function loginUpdate() {
-    const cookieUid = Cookies.get("uid")
-    setUid(cookieUid)
-  }
-
-  // Called after logout
-  function logoutUpdate() {
-    setUid(null)
-  }
+  const loginUpdate = () => setUid(Cookies.get("uid"))
+  const logoutUpdate = () => setUid(null)
 
   return (
     <BrowserRouter>
       <Routes>
+        {/* Public */}
         <Route path="/login" element={!uid ? <Login loginUpdate={loginUpdate} /> : <Navigate to="/" />} />
         <Route path="/register" element={!uid ? <Register /> : <Navigate to="/" />} />
-        <Route path="/" element={uid ? <Home logoutUpdate={logoutUpdate} /> : <Navigate to="/login" />} />
-        <Route path="/expenses" element={uid ? <Expenses logoutUpdate={logoutUpdate} /> : <Navigate to="/login" />} />
-        <Route path="/summary" element={uid ? <Summary logoutUpdate={logoutUpdate} /> : <Navigate to="/login" />} />
-        <Route path="/about" element={uid ? <About logoutUpdate={logoutUpdate} /> : <Navigate to="/login" />} />
+
+        {/* Protected */}
+        <Route path="/" element={uid ? <Home logoutUpdate={logoutUpdate} uid={uid} /> : <Navigate to="/login" />} />
+        <Route path="/expenses" element={uid ? <Expenses logoutUpdate={logoutUpdate} uid={uid} /> : <Navigate to="/login" />} />
+        <Route path="/summary" element={uid ? <Summary logoutUpdate={logoutUpdate} uid={uid} /> : <Navigate to="/login" />} />
+        <Route path="/about" element={uid ? <About logoutUpdate={logoutUpdate} uid={uid} /> : <Navigate to="/login" />} />
+
+        {/* Fallback */}
+        <Route path="*" element={<Navigate to={uid ? "/" : "/login"} />} />
       </Routes>
     </BrowserRouter>
   )
