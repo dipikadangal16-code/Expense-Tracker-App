@@ -1,31 +1,25 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 function Summary() {
-    const [total, setTotal] = useState(0);
+    var [total, setTotal] = useState(0)
 
-    useEffect(() => {
+    useEffect(function () {
         axios.get("https://dummyjson.com/products")
-            .then((res) => {
-                const products = res.data.products;
-
-                // ✅ calculate total expense using reduce
-                const totalExpense = products.reduce(
-                    (sum, item) => sum + item.price,
-                    0
-                );
-
-                setTotal(totalExpense);
-            });
-    }, []);
+            .then(function (response) {
+                var sum = response.data.products.reduce(function (acc, item) {
+                    return acc + item.price
+                }, 0)
+                setTotal(sum)
+            })
+    }, [])
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2>Expense Summary</h2>
-            <h3>Total Expense: ${total}</h3>
+        <div className="page">
+            <h2>Total Expense</h2>
+            <h3>${total}</h3>
         </div>
-    );
+    )
 }
 
-export default Summary;
-
+export default Summary

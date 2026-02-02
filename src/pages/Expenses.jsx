@@ -1,32 +1,29 @@
-import axios from "axios";
-import { useEffect, useState } from "react";
+import axios from "axios"
+import { useEffect, useState } from "react"
 
 function Expenses() {
-    const [expenses, setExpenses] = useState([]);
+    var [items, setItems] = useState([])
 
-    useEffect(() => {
-        axios
-            .get("https://dummyjson.com/products")
-            .then((res) => {
-                setExpenses(res.data.products);
+    useEffect(function () {
+        axios.get("https://dummyjson.com/products")
+            .then(function (response) {
+                setItems(response.data.products)
             })
-            .catch((err) => {
-                console.error(err);
-            });
-    }, []);
+    }, [])
 
     return (
-        <div style={{ padding: "20px" }}>
-            <h2>Expenses List</h2>
-
-            {expenses.map((item) => (
-                <div key={item.id} style={{ borderBottom: "1px solid #ccc", marginBottom: "10px" }}>
-                    <h4>{item.title}</h4>
-                    <p>Price: ${item.price}</p>
-                </div>
-            ))}
+        <div className="page">
+            <h2>Expenses</h2>
+            {items.map(function (item) {
+                return (
+                    <div key={item.id} className="card">
+                        <p>{item.title}</p>
+                        <p>Price: ${item.price}</p>
+                    </div>
+                )
+            })}
         </div>
-    );
+    )
 }
 
-export default Expenses;
+export default Expenses
