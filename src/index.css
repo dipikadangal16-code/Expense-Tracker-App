@@ -6,7 +6,7 @@ body {
 }
 
 .navbar {
-  background-color: #2f6fb2;
+  background-color: #5a0707;
   padding: 10px;
 }
 
@@ -21,7 +21,7 @@ body {
 }
 
 .card {
-  background: white;
+  background: rgb(231, 160, 160);
   padding: 10px;
   margin: 10px 0;
   border-radius: 6px;
@@ -39,7 +39,7 @@ input {
 }
 
 .btn {
-  background: #2f6fb2;
+  background: #80b5ee;
   color: white;
   padding: 10px;
   border: none;
@@ -57,6 +57,6 @@ input {
 }
 
 .google {
-  background: #db4437;
+  background: #ec2715;
   color: white;
 }
