@@ -1,23 +1,30 @@
-import axios from "axios"
 import { useEffect, useState } from "react"
+import axios from "axios"
+import Navbar from "../components/navbar"
 
 function Summary() {
-    var [total, setTotal] = useState(0)
+    var state = useState([])
+    var expenses = state[0]
+    var setExpenses = state[1]
 
     useEffect(function () {
         axios.get("https://dummyjson.com/products")
-            .then(function (response) {
-                var sum = response.data.products.reduce(function (acc, item) {
-                    return acc + item.price
-                }, 0)
-                setTotal(sum)
+            .then(function (res) {
+                setExpenses(res.data.products)
             })
     }, [])
 
+    var total = expenses.reduce(function (sum, item) {
+        return sum + item.price
+    }, 0)
+
     return (
-        <div className="page">
-            <h2>Total Expense</h2>
-            <h3>${total}</h3>
+        <div style={{ backgroundColor: "#eaf4ff", minHeight: "100vh" }}>
+            <Navbar />
+            <div style={{ padding: "20px", color: "#0b3c6d" }}>
+                <h2>Summary</h2>
+                <h3>Total Expense: ${total}</h3>
+            </div>
         </div>
     )
 }
